@@ -4,31 +4,9 @@
 
 import json
 from datetime import datetime as dt
-from visualizations import plot_category_pie, plot_daily_line, plot_monthly_bar
-
-#----------------------------------------------------------------------------
-#                          Variable for json file
-#----------------------------------------------------------------------------
-
-expenses_path = 'data/expenses.json'
-
-#----------------------------------------------------------------------------
-#                        Loading data from json file
-#----------------------------------------------------------------------------
-
-def load_data():
-    print("Loading expenses...")
-
-    try:
-        with open(expenses_path, 'r') as file:
-            expenses = json.load(file)
-        return expenses
-    except FileNotFoundError as e:
-        print("File does not exist:", e)
-        return []
-    except json.JSONDecodeError as e:
-        print("JSON Decode Error:", e)
-        return []
+from utils import load_data, save_data
+from visualizations import visualization_menu
+from analysis import export_to_csv, import_csv, analysis_menu
     
 #----------------------------------------------------------------------------
 #                            Adding a expense
@@ -66,11 +44,8 @@ def add_expense():
     }
     
     loaded.append(expense)
-
-    with open(expenses_path, 'w') as file:
-        json.dump(loaded, file, indent=4)
-
-    print("Expense added successfully")
+    save_data(loaded)
+    print("Expense Added successfully")
 
 #----------------------------------------------------------------------------
 #                          Viewing all expenses
@@ -85,11 +60,14 @@ def view_expense():
         print("No expenses found")
         return
 
-    print(f"{'Sr':<3} | {'Amount':<10} | {'Category':<12} | {'Date':<12} | Note")
-    print("-" * 60)
+    print(f"\n{'Sr':<3} | {'Amount':<10} | {'Category':<13} | {'Date':<12} | Note")
+    print("-" * 70)
 
     for i, exp in enumerate(loaded, start=1):
-        print(f"{i:<3} | {exp['amount']:<10} | {exp['category']:<12} | {exp['date']:<12} | {exp['note']}")
+        note = str(exp.get('note', '')).replace('\n', ' ')
+        print(f"{i:<3} | {exp['amount']:<10} | {exp['category']:<13} | {exp['date']:<12} | {note}")
+    
+    print("-" * 70 + "\n")
 
 #----------------------------------------------------------------------------
 #                          Showing main statisitcs
@@ -197,37 +175,53 @@ def amount_per_day(data):
 #                                   MENU
 #----------------------------------------------------------------------------
 
-while True:
-    print("=========================")
-    print("           Menu          ")
-    print("=========================")
-    print("1. Add Expense")
-    print("-------------------------")
-    print("2. View Expense")
-    print("-------------------------")
-    print("3. Show Statistics")
-    print("-------------------------")
-    print("4. Show and Export charts")
-    print("-------------------------")
-    print("5. Save and Exit")
-    print("-------------------------")
-    try:
-        choice = int(input("Enter your choice: "))
-        match choice:
-            case 1:
-                add_expense()
-            case 2:
-                view_expense()
-            case 3:
-                show_stats()
-            case 4:
-                data = load_data()
-                plot_monthly_bar(data)
-                plot_category_pie(data)
-                plot_daily_line(data)
-            case 5:
-                print("Saving and Exiting...")
-                break
-    except ValueError:
-        print("Invalid choice. Enter a number from 1–5")
-        continue
+def main():
+    while True:
+        print("=========================")
+        print("           Menu          ")
+        print("=========================")
+        print("1. Add Expense")
+        print("-------------------------")
+        print("2. View Expense")
+        print("-------------------------")
+        print("3. Show Statistics")
+        print("-------------------------")
+        print("4. Visualize")
+        print("-------------------------")
+        print("5. Analyze")
+        print("-------------------------")
+        print("6. Import CSV")
+        print("-------------------------")
+        print("7. Export CSV")
+        print("-------------------------")
+        print("8. Save and Exit")
+        print("-------------------------")
+        try:
+            choice = int(input("Enter your choice: "))
+            match choice:
+                case 1:
+                    add_expense()
+                case 2:
+                    view_expense()
+                case 3:
+                    show_stats()
+                case 4:
+                    visualization_menu()
+                case 5:
+                    analysis_menu()
+                case 6:
+                    path = input("Enter CSV file path to import: ")
+                    result = import_csv(path)
+                    if result is not None:
+                        print(result.head())
+                case 7:
+                    export_to_csv()
+                case 8:
+                    print("Saving and Exiting...")
+                    break
+        except ValueError:
+            print("Invalid choice. Enter a number from 1–8")
+            continue
+
+if __name__ == "__main__":
+    main()

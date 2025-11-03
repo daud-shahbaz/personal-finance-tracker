@@ -1,8 +1,10 @@
 import matplotlib.pyplot as plt
 from datetime import datetime
+import pandas as pd
+from utils import load_dataframe
 
 # ------------------------------------------------------------
-#               PIE CHART — CATEGORY SPENDING
+#               Pie Chart for Category Spending
 # ------------------------------------------------------------
 
 def plot_category_pie(data):
@@ -16,7 +18,7 @@ def plot_category_pie(data):
     labels = list(category_stats.keys())
     values = list(category_stats.values())
 
-    plt.figure(figsize=(6, 6))
+    plt.figure(figsize=(5, 5))
     plt.pie(values, labels=labels, autopct="%1.1f%%")
     plt.title("Expenses by Category")
     plt.tight_layout()
@@ -24,7 +26,7 @@ def plot_category_pie(data):
     plt.show()
 
 # ------------------------------------------------------------
-#               BAR CHART — MONTHLY SPENDING
+#               Bar Chart for Monthly Spending
 # ------------------------------------------------------------
 
 def plot_monthly_bar(data):
@@ -40,7 +42,7 @@ def plot_monthly_bar(data):
     months = list(monthly_stats.keys())
     amounts = list(monthly_stats.values())
 
-    plt.figure(figsize=(8, 5))
+    plt.figure(figsize=(6, 4))
     plt.bar(months, amounts)
     plt.xticks(rotation=45)
     plt.title("Monthly Spending")
@@ -51,7 +53,7 @@ def plot_monthly_bar(data):
     plt.show()
 
 # ------------------------------------------------------------
-#              LINE CHART FOR DAILY SPENDING
+#              Line Chart for Daily Spending
 # ------------------------------------------------------------
 
 def plot_daily_line(data):
@@ -66,7 +68,7 @@ def plot_daily_line(data):
     dates = list(daily_stats.keys())
     amounts = list(daily_stats.values())
 
-    plt.figure(figsize=(8, 5))
+    plt.figure(figsize=(6, 4))
     plt.plot(dates, amounts, marker="o")
     plt.xticks(rotation=45)
     plt.title("Daily Spending")
@@ -75,3 +77,38 @@ def plot_daily_line(data):
     plt.tight_layout()
     plt.savefig("charts/daily.png")
     plt.show()
+
+#----------------------------------------------------------------------------
+#                             Visualizations Menu
+#----------------------------------------------------------------------------
+
+def visualization_menu():
+    print("=========================")
+    print("       Visualize         ")
+    print("=========================")
+    print("1. Daily Summary")
+    print("-------------------------")
+    print("2. Monthly Summary")
+    print("-------------------------")
+    print("3. Category Summary")
+    print("-------------------------")
+    print("4. Exit")
+    print("-------------------------")
+
+    df = load_dataframe()
+    df["date"] = df["date"].astype(str)
+    data = df.to_dict(orient="records")
+    try:
+        choice = int(input("Enter your choice: "))
+
+        match choice:
+            case 1:
+                plot_daily_line(data)
+            case 2:
+                plot_monthly_bar(data)
+            case 3:
+                plot_category_pie(data)
+            case 4:
+                print("Exiting...")
+    except ValueError:
+        print("Invalid choice. Enter a number from 1–4")

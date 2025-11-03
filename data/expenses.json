@@ -82,5 +82,11 @@
         "category": "Rent",
         "date": "2025-11-02",
         "note": "House"
+    },
+    {
+        "amount": 300,
+        "category": "Food",
+        "date": "2025-11-03",
+        "note": "Snacks"
     }
 ]
