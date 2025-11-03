@@ -89,14 +89,5 @@ and handled through the project’s core Python methods.
 
 ---
 
-## Technical Stack
-
-
-
-- **Language:** Python 3.x
-- **Data Storage:** JSON
-- **Analysis:** Pandas
-- **Visualization:** Matplotlib
-- **Architecture:** Modular design with separate utilities, analysis, and visualization modules
 
 
